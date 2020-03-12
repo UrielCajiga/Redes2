@@ -3,8 +3,10 @@ package tienda;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,7 +30,24 @@ public class Ventana extends javax.swing.JFrame {
         initComponents();
     }
     int cimg=5;
+    public static DatagramPacket dp = null;
+    public static DatagramSocket c = null;
+    public static Producto p1 = null, aux = null;
+    public static ObjectInputStream ois = null;
     
+    
+    
+    
+    public static Producto recibirObjeto()throws Exception{
+        dp = new DatagramPacket(new byte[65000], 65000);
+        c.receive(dp);
+        
+        ois = new ObjectInputStream(new ByteArrayInputStream(dp.getData()));
+        p1 = (Producto) ois.readObject();
+                
+        System.out.println("----El nombre del producto = "+p1.getNombre()+"----");
+        return p1;
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -174,12 +193,17 @@ public class Ventana extends javax.swing.JFrame {
         ImageIcon icono = new ImageIcon(getClass().getResource(url));
         imgF.setIcon(icono);
         
-        nombreL.setText("hola");
+            nombreL.setText(aux.getNombre());    
+            precioL.setText(String.valueOf(aux.getPrecio()));
+            jTextArea1.setText(aux.getDescrip());
+            
+        //nombreL.setText();
+        /*
         jTextArea1.setText("Lorem Ipsum is simply dummy text \n"
                 + "of the printing and typesetting industry.\n "
                 + "Lorem Ipsum has been the industry's\n"
                 + "standard dummy text ever");
-         
+        */ 
        cimg++;
         
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -197,6 +221,7 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     
+    
     public static void main(String args[]) {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -209,14 +234,13 @@ public class Ventana extends javax.swing.JFrame {
         
         int puerto = 8000;
         
-        DatagramPacket dp = null;
-        DatagramSocket c = null;
+        
         
         //ObjectOutputStream oos = null;
         ByteArrayOutputStream bos = null;
         
         //Celular c2 = null;
-        String comando = new String("hola");//Mensaje a enviar
+        String comando = new String("1");//Mensaje a enviar
         byte[] b = comando.getBytes();//Comvertimos la cadena a bytes
         try {
             
@@ -256,6 +280,9 @@ public class Ventana extends javax.swing.JFrame {
             
             System.out.println("Datagrama enviado con los datos");
             
+            aux = recibirObjeto();
+            
+            //nombreL.setText(aux.getNombre());
             //oos.close();
         } catch (Exception e) {
             System.err.println(e);
