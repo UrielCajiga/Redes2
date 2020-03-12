@@ -10,6 +10,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -211,19 +212,31 @@ public class Ventana extends javax.swing.JFrame {
         DatagramPacket dp = null;
         DatagramSocket c = null;
         
-        ObjectOutputStream oos = null;
+        //ObjectOutputStream oos = null;
         ByteArrayOutputStream bos = null;
         
-        Celular c2 = null;
-        
+        //Celular c2 = null;
+        String comando = new String("hola");//Mensaje a enviar
+        byte[] b = comando.getBytes();//Comvertimos la cadena a bytes
         try {
-            c = new DatagramSocket();
-            dp = new DatagramPacket(new byte[1024], 1024);
-
-            InetAddress direccion = InetAddress.getByName("127.0.0.1");
+            
+            c = new DatagramSocket();//Iniciamos el socket
+            System.out.println("Asignando la direccion de destino...");
+            
+            InetAddress direccion = null;
+            try{
+               direccion = InetAddress.getByName("127.0.0.1");
+           }catch(UnknownHostException u){
+               System.err.println("la direccion no es valida");
+               System.exit(1);
+           }
+                   
+            System.out.println("Creando paquete...");
+            dp = new DatagramPacket(b,b.length, direccion,puerto);//Creamos el paquete de datagrama
+            /*
             dp.setAddress(direccion);
             dp.setPort(puerto);
-
+            
             bos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(bos);
             byte[] buf = new byte[1024];
@@ -236,12 +249,14 @@ public class Ventana extends javax.swing.JFrame {
             oos.flush();
             
             buf = bos.toByteArray();
+            
             dp.setData(buf);
+            */
             c.send(dp);
             
-            System.out.println("Datagrama enviado con los datos:");
+            System.out.println("Datagrama enviado con los datos");
             
-            oos.close();
+            //oos.close();
         } catch (Exception e) {
             System.err.println(e);
         }

@@ -18,7 +18,7 @@ public class Servidor {
         DatagramSocket s = null;
    
         ObjectInputStream ois = null;
-        Celular c2 = null;
+        //Celular c2 = null;
         
         /*-----DECLARAMOS TODOS LOS PRODUCTOS-----*/
         //int id, String nombre, float precio, String descripcion, String nImg
@@ -32,10 +32,11 @@ public class Servidor {
             System.out.println("Recibiendo datos...");
             for (int i = 0; i < 10; i++) {
 
-                dp = new DatagramPacket(new byte[1024], 1024);
+                dp = new DatagramPacket(new byte[65000], 65000);
                 s.receive(dp);
-
+                    
                 System.out.println("Datagrama recibido... extrayendo informacion");
+                /*
                 System.out.println("Host remoto:" + dp.getAddress().getHostAddress() + ":" + dp.getPort());
                 System.out.println("Datos del paquete:");
 
@@ -43,10 +44,12 @@ public class Servidor {
                 c2 = (Celular) ois.readObject();
                 
                 System.out.println("El precio del celular = "+c2.getPrecio());
-                
-                ois.close();
+                */
+                String nombre = new String (dp.getData(),0,dp.getLength());
+                System.out.println("Comando = "+nombre);
+                //ois.close();
             }//for
-            s.close();
+            //s.close();
         } catch (Exception e) {
             System.err.println(e);
         }
